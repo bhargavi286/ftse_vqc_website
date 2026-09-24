@@ -55,3 +55,7 @@ The predict page currently labels the two inputs as "Previous close price"
 and "Trading volume" as a sensible default for a FTSE-prediction tool. If your
 real model uses different features, update the `<label>` and `.help` text in
 `templates/predict.html`.
+
+LIVE DEMO :  https://ftse-vqc-website-1.onrender.com
+
+
