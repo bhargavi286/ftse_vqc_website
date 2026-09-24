@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predict — FTSE VQC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="/" class="brand">
+      <span class="brand-mark">Q</span>
+      FTSE&nbsp;VQC
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="predict-shell">
+
+      <!-- Input panel -->
+      <div class="panel">
+        <h2>Run a prediction</h2>
+        <p class="panel-sub">Enter the two market indicators below to generate a forecast.</p>
+
+        {% if error %}
+        <div class="error-banner">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="/predict">
+          <div class="field">
+            <label>Previous close price <span class="hint">Feature 1</span></label>
+            <input type="number" step="any" name="feature1" placeholder="e.g. 7624.50"
+              value="{{ feature1 if feature1 is not none else '' }}" required>
+            <div class="help">Last recorded closing value of the index.</div>
+          </div>
+
+          <div class="field">
+            <label>Trading volume <span class="hint">Feature 2</span></label>
+            <input type="number" step="any" name="feature2" placeholder="e.g. 812.3"
+              value="{{ feature2 if feature2 is not none else '' }}" required>
+            <div class="help">Volume traded, in millions of shares.</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Predict →</button>
+        </form>
+      </div>
+
+      <!-- Results panel -->
+      <div class="panel">
+        {% if prediction is not none %}
+          <div class="result-head">
+            <h2 style="margin:0;">Prediction result</h2>
+            <span class="badge {{ 'up' if prediction >= 0 else 'down' }}">
+              {{ '▲ Bullish signal' if prediction >= 0 else '▼ Bearish signal' }}
+            </span>
+          </div>
+          <div class="result-value">{{ "%.4f"|format(prediction) }}</div>
+          <p class="result-label">Model output from the VQC pipeline</p>
+
+          <div class="result-inputs">
+            <div class="chip">Previous close<b>{{ feature1 }}</b></div>
+            <div class="chip">Trading volume<b>{{ feature2 }}</b></div>
+          </div>
+
+          <div class="chart-frame">
+            <img src="data:image/png;base64,{{ graph_url }}" alt="Prediction chart">
+          </div>
+        {% else %}
+          <div class="result-empty">
+            <div class="emoji-badge">◎</div>
+            <h3>No prediction yet</h3>
+            <p>Fill in the indicators on the left and run the model to see your result and chart here.</p>
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">FTSE VQC · Educational prototype — not financial advice</footer>
+
+</body>
+</html>
